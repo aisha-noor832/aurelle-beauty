@@ -603,17 +603,33 @@ function AuthPage({ mode }) {
     event.preventDefault()
     setError('')
     setSubmitting(true)
+
     try {
+      let destination = redirectTo
+
       if (isRegister) {
         const result = await register(name, email, password)
+
         if (!result.authenticated) {
-          navigate('/login', { replace: true, state: { registered: true } })
+          navigate('/login', {
+            replace: true,
+            state: { registered: true },
+          })
           return
         }
+
+        destination = location.state?.from || '/account'
       } else {
-        await login(email, password)
+        const signedInUser = await login(email, password)
+
+        if (!location.state?.from) {
+          destination = signedInUser?.role === 'admin'
+            ? '/admin'
+            : '/account'
+        }
       }
-      navigate(redirectTo, { replace: true })
+
+      navigate(destination, { replace: true })
     } catch (requestError) {
       setError(requestError.message)
     } finally {
