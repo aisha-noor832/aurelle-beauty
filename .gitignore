@@ -1,0 +1,9 @@
+# Dependencies
+**/node_modules/
+node_modules/
+client/node_modules/
+server/node_modules/
+# Never commit local environment secrets
+**/.env
+**/.env.*
+!**/.env.example
